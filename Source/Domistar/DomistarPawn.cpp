@@ -65,31 +65,29 @@ void ADomistarPawn::Tick(float DeltaSeconds)
 
 	//make stick input deliberate before it impacts direction
 	const FVector InputDirection = FVector(ForwardValue, RightValue, 0.f);
-	if(InputDirection.Size() < 0.5f)
+	if (InputDirection.Size() > 0.5f)
 	{
-		Move(Drift);
-		return;
-	}
+		// Scale the directional input to a length of 1.0 for any input magnitude
+		const FVector MoveDirection = InputDirection.GetClampedToSize(1.0f, 1.0f);
 
-	// Scale the directional input to a length of 1.0 for any input magnitude
-	const FVector MoveDirection = InputDirection.GetClampedToSize(1.0f, 1.0f);
+		// Calculate  movement
+		const FVector Movement = MoveDirection * MoveSpeed * DeltaSeconds;
 
-	// Calculate  movement
-	const FVector Movement = MoveDirection * MoveSpeed * DeltaSeconds;
+		// If non-zero size, move this actor
+		if (Movement.SizeSquared() > 0.0f)
+		{
+			Move(Movement, DeltaSeconds);
 
-	// If non-zero size, move this actor
-	if (Movement.SizeSquared() > 0.0f)
-	{
-		Move(Movement);
-
-		//this movement becomes the drift
-		Drift.X = Movement.X;
-		Drift.Y = Movement.Y;
-		Drift.Z = Movement.Z;
+			//this movement becomes the drift
+			Drift.X = Movement.X;
+			Drift.Y = Movement.Y;
+			Drift.Z = Movement.Z;
+		}
 	}
 	else
 	{
-		Move(Drift);
+		Move(Drift, DeltaSeconds);
+		Drift = Drift * .999f;
 	}
 	
 	// Create fire direction vector
@@ -101,9 +99,10 @@ void ADomistarPawn::Tick(float DeltaSeconds)
 	FireShot(FireDirection);
 }
 
-void ADomistarPawn::Move(FVector movement)
+void ADomistarPawn::Move(FVector movement, float DeltaSeconds)
 {
-	const FRotator NewRotation = movement.Rotation();
+	const FRotator NewRotation = FMath::RInterpTo(RootComponent->GetComponentRotation(), movement.Rotation(), DeltaSeconds, 10.f);
+
 	FHitResult Hit(1.f);
 	RootComponent->MoveComponent(movement, NewRotation, true, &Hit);
 
@@ -111,8 +110,9 @@ void ADomistarPawn::Move(FVector movement)
 	{
 		const FVector Normal2D = Hit.Normal.GetSafeNormal2D();
 		//reflective bounce
+		const float VelocityDamper = 0.9f;
 		//R = -2*(V dot N)*N + V
-		Drift = -2 * FVector::DotProduct(movement, Normal2D) * Normal2D + movement;	
+		Drift = VelocityDamper  * -2 * FVector::DotProduct(movement, Normal2D) * Normal2D + movement;
 	}
 }
 

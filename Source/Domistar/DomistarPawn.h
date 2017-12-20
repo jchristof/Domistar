@@ -66,7 +66,7 @@ private:
 	FTimerHandle TimerHandle_ShotTimerExpired;
 	FVector Drift;
 
-	void Move(FVector movement);
+	void Move(FVector movement, float DeltaSeconds);
 
 public:
 	/** Returns ShipMeshComponent subobject **/
