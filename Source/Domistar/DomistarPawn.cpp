@@ -38,6 +38,8 @@ ADomistarPawn::ADomistarPawn()
 
 	// Movement
 	MoveSpeed = 1000.0f;
+	CollideDrag = 0.9f;
+	DriftDrag = 0.999f;
 	// Weapon
 	GunOffset = FVector(90.f, 0.f, 0.f);
 	FireRate = 0.1f;
@@ -87,7 +89,7 @@ void ADomistarPawn::Tick(float DeltaSeconds)
 	else
 	{
 		Move(Drift, DeltaSeconds);
-		Drift = Drift * .999f;
+		Drift = Drift * DriftDrag;
 	}
 	
 	// Create fire direction vector
@@ -101,18 +103,16 @@ void ADomistarPawn::Tick(float DeltaSeconds)
 
 void ADomistarPawn::Move(FVector movement, float DeltaSeconds)
 {
-	const FRotator NewRotation = FMath::RInterpTo(RootComponent->GetComponentRotation(), movement.Rotation(), DeltaSeconds, 10.f);
-
 	FHitResult Hit(1.f);
+	const FRotator NewRotation = FMath::RInterpTo(RootComponent->GetComponentRotation(), movement.Rotation(), DeltaSeconds, 10.f);
 	RootComponent->MoveComponent(movement, NewRotation, true, &Hit);
 
 	if (Hit.IsValidBlockingHit())
 	{
 		const FVector Normal2D = Hit.Normal.GetSafeNormal2D();
 		//reflective bounce
-		const float VelocityDamper = 0.9f;
 		//R = -2*(V dot N)*N + V
-		Drift = VelocityDamper  * -2 * FVector::DotProduct(movement, Normal2D) * Normal2D + movement;
+		Drift = CollideDrag  * -2 * FVector::DotProduct(movement, Normal2D) * Normal2D + movement;
 	}
 }
 

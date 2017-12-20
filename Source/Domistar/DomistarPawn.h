@@ -36,6 +36,14 @@ public:
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
 	float MoveSpeed;
 
+	/* Loss of speed from a reflect collision */
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+	float CollideDrag;
+
+	/* Loss of speed from a reflect collision */
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+	float DriftDrag;
+
 	/** Sound to play each time we fire */
 	UPROPERTY(Category = Audio, EditAnywhere, BlueprintReadWrite)
 	class USoundBase* FireSound;
