@@ -63,8 +63,16 @@ void ADomistarPawn::Tick(float DeltaSeconds)
 	const float ForwardValue = GetInputAxisValue(MoveForwardBinding);
 	const float RightValue = GetInputAxisValue(MoveRightBinding);
 
-	// Clamp max size so that (X=1, Y=1) doesn't cause faster movement in diagonal directions
-	const FVector MoveDirection = FVector(ForwardValue, RightValue, 0.f).GetClampedToSize(1.0f, 1.0f);
+	//make stick input deliberate before it impacts direction
+	const FVector InputDirection = FVector(ForwardValue, RightValue, 0.f);
+	if(InputDirection.Size() < 0.5f)
+	{
+		Move(Drift);
+		return;
+	}
+
+	// Scale the directional input to a length of 1.0 for any input magnitude
+	const FVector MoveDirection = InputDirection.GetClampedToSize(1.0f, 1.0f);
 
 	// Calculate  movement
 	const FVector Movement = MoveDirection * MoveSpeed * DeltaSeconds;
@@ -72,35 +80,16 @@ void ADomistarPawn::Tick(float DeltaSeconds)
 	// If non-zero size, move this actor
 	if (Movement.SizeSquared() > 0.0f)
 	{
-		const FRotator NewRotation = Movement.Rotation();
-		FHitResult Hit(1.f);
-		RootComponent->MoveComponent(Movement, NewRotation, true, &Hit);
-		
-		if (Hit.IsValidBlockingHit())
-		{
-			const FVector Normal2D = Hit.Normal.GetSafeNormal2D();
-			const FVector Deflection = FVector::VectorPlaneProject(Movement, Normal2D) * (1.f - Hit.Time);
-			RootComponent->MoveComponent(Deflection, NewRotation, true);
-		}
+		Move(Movement);
 
+		//this movement becomes the drift
 		Drift.X = Movement.X;
 		Drift.Y = Movement.Y;
 		Drift.Z = Movement.Z;
 	}
 	else
 	{
-		const FRotator NewRotation = Drift.Rotation();
-		FHitResult Hit(1.f);
-		RootComponent->MoveComponent(Drift, NewRotation, true, &Hit);
-
-		if (Hit.IsValidBlockingHit())
-		{
-			const FVector Normal2D = Hit.Normal.GetSafeNormal2D();
-			const FVector Deflection = FVector::VectorPlaneProject(Drift, Normal2D) * (1.f - Hit.Time);
-			RootComponent->MoveComponent(Deflection, NewRotation, true);
-		}
-
-		//Drift = Drift / 10;
+		Move(Drift);
 	}
 	
 	// Create fire direction vector
@@ -110,6 +99,21 @@ void ADomistarPawn::Tick(float DeltaSeconds)
 
 	// Try and fire a shot
 	FireShot(FireDirection);
+}
+
+void ADomistarPawn::Move(FVector movement)
+{
+	const FRotator NewRotation = movement.Rotation();
+	FHitResult Hit(1.f);
+	RootComponent->MoveComponent(movement, NewRotation, true, &Hit);
+
+	if (Hit.IsValidBlockingHit())
+	{
+		const FVector Normal2D = Hit.Normal.GetSafeNormal2D();
+		//reflective bounce
+		//R = -2*(V dot N)*N + V
+		Drift = -2 * FVector::DotProduct(movement, Normal2D) * Normal2D + movement;	
+	}
 }
 
 void ADomistarPawn::FireShot(FVector FireDirection)

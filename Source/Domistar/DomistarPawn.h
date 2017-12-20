@@ -66,6 +66,8 @@ private:
 	FTimerHandle TimerHandle_ShotTimerExpired;
 	FVector Drift;
 
+	void Move(FVector movement);
+
 public:
 	/** Returns ShipMeshComponent subobject **/
 	FORCEINLINE class UStaticMeshComponent* GetShipMeshComponent() const { return ShipMeshComponent; }
