@@ -16,7 +16,6 @@ void AOrePickup::WasCollected_Implementation(AActor* collector)
 	GetMesh()->SetSimulatePhysics(false);
 	
 	Collector = collector;
-	//Destroy();
 }
 
 void AOrePickup::Tick(float DeltaSeconds)

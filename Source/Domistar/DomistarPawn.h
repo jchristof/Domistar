@@ -81,6 +81,7 @@ private:
 	FVector Drift;
 
 	void Move(FVector movement, float DeltaSeconds);
+	void ReleaseMissle();
 
 public:
 	/** Returns ShipMeshComponent subobject **/

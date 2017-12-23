@@ -66,8 +66,11 @@ ADomistarPawn::ADomistarPawn()
 	bCanFire = true;
 
 	Drift = FVector(0., 0., 0.);
+}
 
-
+void ADomistarPawn::ReleaseMissle()
+{
+	
 }
 
 void ADomistarPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -79,6 +82,8 @@ void ADomistarPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 	PlayerInputComponent->BindAxis(MoveRightBinding);
 	PlayerInputComponent->BindAxis(FireForwardBinding);
 	PlayerInputComponent->BindAxis(FireRightBinding);
+
+	PlayerInputComponent->BindAction("Missle", IE_Pressed, this, &ADomistarPawn::ReleaseMissle);
 }
 
 void ADomistarPawn::Tick(float DeltaSeconds)
