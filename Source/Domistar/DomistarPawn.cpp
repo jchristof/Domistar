@@ -4,11 +4,29 @@
 #include "DomistarPawn.h"
 #include "DomistarProjectile.h"
 #include "TimerManager.h"
+#include "Pickup.h"
+#include "KismetDebugUtilities.h"
 
 const FName ADomistarPawn::MoveForwardBinding("MoveForward");
 const FName ADomistarPawn::MoveRightBinding("MoveRight");
 const FName ADomistarPawn::FireForwardBinding("FireForward");
 const FName ADomistarPawn::FireRightBinding("FireRight");
+
+void ADomistarPawn::CollectPickups()
+{
+	TArray<AActor*> CollectedActors;
+	CollectionSphere->GetOverlappingActors(CollectedActors);
+
+	for(int32 iColleted = 0; iColleted < CollectedActors.Num(); ++iColleted)
+	{
+		APickup* const TestPickup = Cast<APickup>(CollectedActors[iColleted]);
+		if(!TestPickup || TestPickup->IsPendingKill() || !TestPickup->IsActive())
+			continue;
+
+		TestPickup->WasCollected();
+		TestPickup->SetActive(false);
+	}
+}
 
 ADomistarPawn::ADomistarPawn()
 {	
@@ -18,7 +36,9 @@ ADomistarPawn::ADomistarPawn()
 	RootComponent = ShipMeshComponent;
 	ShipMeshComponent->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
 	ShipMeshComponent->SetStaticMesh(ShipMesh.Object);
-	
+
+	CollectionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollectionSphere"));
+
 	// Cache our sound effect
 	static ConstructorHelpers::FObjectFinder<USoundBase> FireAudio(TEXT("/Game/TwinStick/Audio/TwinStickFire.TwinStickFire"));
 	FireSound = FireAudio.Object;
@@ -46,6 +66,8 @@ ADomistarPawn::ADomistarPawn()
 	bCanFire = true;
 
 	Drift = FVector(0., 0., 0.);
+
+
 }
 
 void ADomistarPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -61,6 +83,16 @@ void ADomistarPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 
 void ADomistarPawn::Tick(float DeltaSeconds)
 {
+	CollectPickups();
+	
+//	DrawDebugSphere(
+//		GetWorld(),
+//		CollectionSphere->GetComponentLocation(),
+//		CollectionSphere->GetScaledSphereRadius(),
+//		32,
+//		FColor(255, 0, 0)
+//	);
+
 	// Find movement direction
 	const float ForwardValue = GetInputAxisValue(MoveForwardBinding);
 	const float RightValue = GetInputAxisValue(MoveRightBinding);
@@ -132,7 +164,8 @@ void ADomistarPawn::FireShot(FVector FireDirection)
 			if (World != NULL)
 			{
 				// spawn the projectile
-				World->SpawnActor<ADomistarProjectile>(SpawnLocation, FireRotation);
+				ADomistarProjectile* const shot = World->SpawnActor<ADomistarProjectile>(SpawnLocation, FireRotation);
+				shot->SetOwner(this);
 			}
 
 			bCanFire = false;

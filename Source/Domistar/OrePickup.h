@@ -15,6 +15,6 @@ class DOMISTAR_API AOrePickup : public APickup
 	
 public:
 	AOrePickup();
-	
+	void WasCollected_Implementation() override;
 	
 };

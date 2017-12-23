@@ -21,6 +21,12 @@ class ADomistarPawn : public APawn
 	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	class USphereComponent* CollectionSphere;
+
+	UFUNCTION(BlueprintCallable, Category="Pickups")
+	void CollectPickups();
 public:
 	ADomistarPawn();
 
@@ -83,5 +89,7 @@ public:
 	FORCEINLINE class UCameraComponent* GetCameraComponent() const { return CameraComponent; }
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
+	FORCEINLINE USphereComponent* GetSphereComponent() const { return CollectionSphere; }
 };
 

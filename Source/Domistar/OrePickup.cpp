@@ -8,4 +8,8 @@ AOrePickup::AOrePickup()
 	GetMesh()->SetSimulatePhysics(true);
 }
 
-
+void AOrePickup::WasCollected_Implementation()
+{
+	Super::WasCollected_Implementation();
+	Destroy();
+}
