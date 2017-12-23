@@ -23,7 +23,7 @@ void ADomistarPawn::CollectPickups()
 		if(!TestPickup || TestPickup->IsPendingKill() || !TestPickup->IsActive())
 			continue;
 
-		TestPickup->WasCollected();
+		TestPickup->WasCollected(this);
 		TestPickup->SetActive(false);
 	}
 }

@@ -15,6 +15,10 @@ class DOMISTAR_API AOrePickup : public APickup
 	
 public:
 	AOrePickup();
-	void WasCollected_Implementation() override;
-	
+	void WasCollected_Implementation(class AActor* collector) override;
+	virtual void Tick(float DeltaSeconds) override;
+
+private:
+	class AActor* Collector;
+	int CollectSpeed = 1;
 };

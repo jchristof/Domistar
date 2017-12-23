@@ -8,8 +8,30 @@ AOrePickup::AOrePickup()
 	GetMesh()->SetSimulatePhysics(true);
 }
 
-void AOrePickup::WasCollected_Implementation()
+void AOrePickup::WasCollected_Implementation(AActor* collector)
 {
-	Super::WasCollected_Implementation();
-	Destroy();
+	Super::WasCollected_Implementation(collector);
+
+	SetActorEnableCollision(false);
+	GetMesh()->SetSimulatePhysics(false);
+	
+	Collector = collector;
+	//Destroy();
+}
+
+void AOrePickup::Tick(float DeltaSeconds)
+{
+	if (!Collector)
+		return;
+
+	FVector directionToCollector = Collector->GetActorLocation() - GetActorLocation();
+	
+	if(directionToCollector.Size() < 10)
+	{
+		Destroy();
+		return;
+	}
+	directionToCollector.Normalize();
+	RootComponent->MoveComponent(directionToCollector * CollectSpeed, GetActorRotation(), true);
+	CollectSpeed += 1;
 }

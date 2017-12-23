@@ -29,9 +29,9 @@ public:
 	void SetActive(bool NewPickupState);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void WasCollected();
+	void WasCollected(class AActor* collector);
 
-	virtual void WasCollected_Implementation();
+	virtual void WasCollected_Implementation(class AActor* collector);
 
 protected:
 	bool bIsActive;
