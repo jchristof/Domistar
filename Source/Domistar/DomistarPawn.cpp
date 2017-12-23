@@ -6,6 +6,7 @@
 #include "TimerManager.h"
 #include "Pickup.h"
 #include "KismetDebugUtilities.h"
+#include "DomistarMissle.h"
 
 const FName ADomistarPawn::MoveForwardBinding("MoveForward");
 const FName ADomistarPawn::MoveRightBinding("MoveRight");
@@ -70,7 +71,15 @@ ADomistarPawn::ADomistarPawn()
 
 void ADomistarPawn::ReleaseMissle()
 {
-	
+	UWorld* const World = GetWorld();
+	if (World != NULL)
+	{
+		// spawn the projectile
+		ADomistarMissle* const shot = World->SpawnActor<ADomistarMissle>(GetActorLocation(), FRotator());
+		shot->SetOwner(this);
+		shot->SetActorEnableCollision(false);
+		shot->DisableComponentsSimulatePhysics();
+	}
 }
 
 void ADomistarPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
