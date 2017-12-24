@@ -31,6 +31,6 @@ void AOrePickup::Tick(float DeltaSeconds)
 		return;
 	}
 	directionToCollector.Normalize();
-	RootComponent->MoveComponent(directionToCollector * CollectSpeed, GetActorRotation(), true);
-	CollectSpeed += 1;
+	RootComponent->MoveComponent(directionToCollector * CollectSpeed * DeltaSeconds, GetActorRotation(), true);
+	CollectSpeed += 100;
 }

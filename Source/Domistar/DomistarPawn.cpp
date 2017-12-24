@@ -26,6 +26,7 @@ void ADomistarPawn::CollectPickups()
 
 		TestPickup->WasCollected(this);
 		TestPickup->SetActive(false);
+		++MissileCount;
 	}
 }
 
@@ -72,14 +73,16 @@ ADomistarPawn::ADomistarPawn()
 void ADomistarPawn::ReleaseMissle()
 {
 	UWorld* const World = GetWorld();
-	if (World != NULL)
-	{
-		// spawn the projectile
-		ADomistarMissle* const shot = World->SpawnActor<ADomistarMissle>(GetActorLocation(), FRotator());
-		shot->SetOwner(this);
-		shot->SetActorEnableCollision(false);
-		shot->DisableComponentsSimulatePhysics();
-	}
+	if (World == NULL || MissileCount <= 0)
+		return;
+
+	// spawn the projectile
+	ADomistarMissle* const shot = World->SpawnActor<ADomistarMissle>(GetActorLocation(), FRotator());
+	shot->SetOwner(this);
+	shot->SetActorEnableCollision(false);
+	shot->DisableComponentsSimulatePhysics();
+	--MissileCount;
+	
 }
 
 void ADomistarPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)

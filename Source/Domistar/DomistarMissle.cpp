@@ -24,8 +24,7 @@ ADomistarMissle::ADomistarMissle()
 // Called when the game starts or when spawned
 void ADomistarMissle::BeginPlay()
 {
-	Super::BeginPlay();
-	
+	Super::BeginPlay();	
 }
 
 // Called every frame
@@ -41,8 +40,8 @@ void ADomistarMissle::Tick( float DeltaTime )
 		return;
 	}
 	directionToEnemy.Normalize();
-	RootComponent->MoveComponent(directionToEnemy * MissleSpeed, GetActorRotation(), true);
-	MissleSpeed = MissleSpeed > 10 ? MissleSpeed : MissleSpeed + 1;
+	RootComponent->MoveComponent(directionToEnemy * MissleSpeed * DeltaTime, GetActorRotation(), true);
+	MissleSpeed = MissleSpeed > 2000 ? MissleSpeed : MissleSpeed + 100;
 }
 
 void ADomistarMissle::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)

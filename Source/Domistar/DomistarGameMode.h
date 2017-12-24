@@ -12,6 +12,15 @@ class ADomistarGameMode : public AGameModeBase
 
 public:
 	ADomistarGameMode();
+	virtual void BeginPlay() override;
+
+protected:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Power", Meta = (BlueprintProtected="true"))
+	TSubclassOf<class UUserWidget> HUDWidgetClass;
+
+	UPROPERTY()
+	class UUserWidget* CurrentWidget;
 };
 
 

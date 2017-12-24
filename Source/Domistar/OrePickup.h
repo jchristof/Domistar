@@ -20,5 +20,5 @@ public:
 
 private:
 	class AActor* Collector;
-	int CollectSpeed = 1;
+	int CollectSpeed = 1000;
 };

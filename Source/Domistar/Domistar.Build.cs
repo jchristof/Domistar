@@ -4,8 +4,7 @@ using UnrealBuildTool;
 
 public class Domistar : ModuleRules
 {
-	public Domistar(TargetInfo Target)
-	{
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+	public Domistar(TargetInfo Target) {
+	    PublicDependencyModuleNames.AddRange(new string[] {"Core", "CoreUObject", "Engine", "InputCore", "UMG", "Slate", "SlateCore"});
 	}
 }

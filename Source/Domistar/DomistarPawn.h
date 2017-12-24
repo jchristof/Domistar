@@ -27,6 +27,7 @@ class ADomistarPawn : public APawn
 
 	UFUNCTION(BlueprintCallable, Category="Pickups")
 	void CollectPickups();
+
 public:
 	ADomistarPawn();
 
@@ -54,6 +55,12 @@ public:
 	UPROPERTY(Category = Audio, EditAnywhere, BlueprintReadWrite)
 	class USoundBase* FireSound;
 
+	UFUNCTION(BlueprintCallable, Category = "Pickups")
+	int GetMissileCount() { return MissileCount; }
+
+	UPROPERTY()
+	int MissileCount;
+
 	// Begin Actor Interface
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -79,6 +86,7 @@ private:
 	/** Handle for efficient management of ShotTimerExpired timer */
 	FTimerHandle TimerHandle_ShotTimerExpired;
 	FVector Drift;
+	
 
 	void Move(FVector movement, float DeltaSeconds);
 	void ReleaseMissle();
