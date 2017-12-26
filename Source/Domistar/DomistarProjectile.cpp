@@ -3,6 +3,7 @@
 #include "Domistar.h"
 #include "DomistarProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Target.h"
 
 ADomistarProjectile::ADomistarProjectile() 
 {
@@ -36,6 +37,13 @@ void ADomistarProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
 	{
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 20.0f, GetActorLocation());
+		ATarget* target = Cast<ATarget>(OtherActor);
+		if (target != nullptr) {
+			
+			target->Hit(NormalImpulse, Hit);
+
+		}
+
 	}
 
 	Destroy();
