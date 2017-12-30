@@ -22,7 +22,7 @@ ATarget::ATarget()
 	TargetMesh->OnComponentHit.AddDynamic(this, &ATarget::OnHit);		// set up a notification for when this component hits something
 	RootComponent = TargetMesh;
 
-	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("/Game/TwinStickCPP/Particle/HitParticle"));
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("/Game/StarterContent/Particles/P_Smoke"));
 	PSC = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("HitParticle"));
 	PSC->SetTemplate(PS.Object);
 	PSC->ActivateSystem(true);
@@ -45,7 +45,7 @@ void ATarget::Tick( float DeltaTime )
 void ATarget::Hit(FVector NormalImpulse, const FHitResult& Hit)
 {
 
-
+	//UGameplayStatics::SpawnEmitterAttached(YourParticleSystem, Component, NAME_None, Location, Rotation, EAttachLocation::SnapToTarget, false);
 	Destroy();
 	
 }
