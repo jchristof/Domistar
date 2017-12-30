@@ -18,7 +18,7 @@ AAttackTarget::AAttackTarget()
 	TargetMesh->SetupAttachment(RootComponent);
 	TargetMesh->SetSimulatePhysics(true);
 	TargetMesh->SetNotifyRigidBodyCollision(true);
-	//TargetMesh->OnComponentHit.AddDynamic(this, &AAttackTarget::OnHit);		// set up a notification for when this component hits something
+	TargetMesh->OnComponentHit.AddDynamic(this, &AAttackTarget::OnHit);		// set up a notification for when this component hits something
 	RootComponent = TargetMesh;
 
 }
@@ -34,19 +34,22 @@ void AAttackTarget::BeginPlay()
 void AAttackTarget::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 	TargetMesh->AddImpulseAtLocation(FVector(100., 100., 100.), FVector(0., 0., 0.));
 
 }
 
-//void AAttackTarget::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-//{
-//	// Only add impulse and destroy projectile if we hit a physics
-//	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics() && Cast<ADomistarProjectile>(OtherActor) != nullptr)
-//	{
-//		//OtherComp->AddImpulseAtLocation(GetVelocity() * 20.0f, GetActorLocation());
-//		Destroy();
-//
-//	}
-//}
+void AAttackTarget::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	//if(OtherActor->IsA(AEnemy::StaticClass())
+	//if(OtherActor->StaticClass() == AEnemy::StaticClass())
+	//if(OtherActor->GetClass()->IsChildOf(AEnemy::StaticClass()))
+
+	// Only add impulse and destroy projectile if we hit a physics
+	//if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics() && Cast<ADomistarProjectile>(OtherActor) != nullptr)
+	{
+		//OtherComp->AddImpulseAtLocation(GetVelocity() * 20.0f, GetActorLocation());
+		Destroy();
+
+	}
+}
 
