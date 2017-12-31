@@ -28,6 +28,10 @@ class ADomistarPawn : public APawn
 	UFUNCTION(BlueprintCallable, Category="Pickups")
 	void CollectPickups();
 
+private:
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
 public:
 	ADomistarPawn();
 

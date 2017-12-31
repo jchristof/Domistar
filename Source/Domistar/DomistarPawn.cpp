@@ -38,6 +38,8 @@ ADomistarPawn::ADomistarPawn()
 	RootComponent = ShipMeshComponent;
 	ShipMeshComponent->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
 	ShipMeshComponent->SetStaticMesh(ShipMesh.Object);
+	ShipMeshComponent->OnComponentHit.AddDynamic(this, &ADomistarPawn::OnHit);
+	ShipMeshComponent->SetNotifyRigidBodyCollision(true);
 
 	CollectionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollectionSphere"));
 
@@ -196,6 +198,17 @@ void ADomistarPawn::FireShot(FVector FireDirection)
 
 			bCanFire = false;
 		}
+	}
+}
+
+void ADomistarPawn::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	// Only add impulse and destroy projectile if we hit a physics
+	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
+	{
+		auto velocity = GetVelocity();
+		OtherComp->AddImpulseAtLocation(FVector(2000.,2000.,2000.), OtherActor->GetActorLocation());
+		//OtherActor->Destroy();
 	}
 }
 
